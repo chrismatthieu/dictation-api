@@ -1,0 +1,10 @@
+{
+    "name": "dictationapi"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "*"
+    , "jade": ">= 0.0.1"
+    , "filed": "*"
+  }
+}
