@@ -6,5 +6,7 @@
       "express": "*"
     , "jade": ">= 0.0.1"
     , "filed": "*"
+    , "superagent": "*"
+    , "google-speech-api":"*"
   }
 }

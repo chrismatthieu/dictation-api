@@ -8,6 +8,9 @@ var express = require('express')
   , spawn = require('child_process').spawn
   , filed = require('filed');
 
+var request = require('superagent');
+var speech = require('google-speech-api');  
+
 var app = express();
 
 // Configuration
@@ -42,15 +45,22 @@ app.get('/audio/new', function(req, res){
 
 app.post('/audio/new', function(req, res) {
 
-  
-  var tts = spawn('stenographer', ['-t', 'wav']);
-  filed(req.files.audio.path).pipe(tts.stdin);
+  var opts = {filetype: 'mp3'};
+  request
+    .get(req.files.audio.path)
+    .pipe(speech(opts, function (err, results) {
+      // handle the results
+      console.log(results);
+    }));
 
-  // processAudio(req.files.audio.path, function(result){
-    // console.log(result);
-    // res.send('Uploaded ' + req.files.audio.name + ' to ' + req.files.audio.path);
-    tts.stdout.pipe(res);
-  // })
+  // var tts = spawn('stenographer', ['-t', 'wav']);
+  // filed(req.files.audio.path).pipe(tts.stdin);
+
+  // // processAudio(req.files.audio.path, function(result){
+  //   // console.log(result);
+  //   // res.send('Uploaded ' + req.files.audio.name + ' to ' + req.files.audio.path);
+  //   tts.stdout.pipe(res);
+  // // })
   
 });
 
