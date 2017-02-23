@@ -1,9 +1,10 @@
+'use strict';
+
 var express = require('express');
 var routes = require('./routes');
 const expressFileupload = require("express-fileupload");
 var request = require('superagent');
-var speech = require('google-speech-api');
-var key = 'google-speech-api-key'
+// var speech = require('google-speech-api');
 
 var app = express();
 app.use(expressFileupload());
@@ -33,6 +34,10 @@ app.get('/audio/new', function(req, res){
 });
 
 app.post('/audio/new', function(req, res) {
+  console.log(req.files);
+  let sampleFile = req.files.audio;
+  sampleFile.mv('./public/audio/temp.raw');
+
   // var opts = {
   //   filetype: 'mp3',
   //   key: key
@@ -48,16 +53,16 @@ app.post('/audio/new', function(req, res) {
 
 
 
-  var opts = {
-    file: './audio/Allison.mp3',
-    key: key
-  };
-
-  speech(opts, function (err, results) {
-    console.log(results);
-    res.send(results);
-    // [{result: [{alternative: [{transcript: '...'}]}]}]
-  });
+  // var opts = {
+  //   file: './audio/allison.flac',
+  //   keyFilename: './keyfile.json'
+  // };
+  //
+  // speech(opts, function (err, results) {
+  //   console.log(results);
+  //   res.send(results);
+  //   // [{result: [{alternative: [{transcript: '...'}]}]}]
+  // });
 
 
 
@@ -73,12 +78,14 @@ app.post('/audio/new', function(req, res) {
 
 
   // var googspeech = require('@google-cloud/speech')({
-  //   projectId: 'dictation-159501',
-  //   key: key
+  //   projectId: 'dictation-159501'
+  //   // keyFilename: require('./keyfile.json'),
+  //   // credentials: require('./keyfile.json')
   // });
-  // googspeech.recognize('audio/Allison.mp3', {
-  //   encoding: 'LINEAR16',
-  //   sampleRate: 16000
+  // googspeech.recognize('./audio/allison.flac', {
+  //   encoding: 'FLAC',
+  //   sampleRate: 16000,
+  //   languageCode: 'en-US'
   // }, function(err, transcript) {
   //   console.log(transcript);
   // });
@@ -93,7 +100,9 @@ app.post('/audio/new', function(req, res) {
   // // Instantiates a client
   // const speech = Speech({
   //   projectId: 'dictation-159501',
-  //   key: key
+  //   keyFilename: '/Users/topher/Projects/Misc/dictation-api/keyfile.json',
+  //   languageCode: 'en-US',
+  //   credentials: require('./keyfile.json')
   // });
   //
   // // The path to the local file on which to perform speech recognition, e.g. /path/to/audio.raw
@@ -107,12 +116,13 @@ app.post('/audio/new', function(req, res) {
   //
   // const request = {
   //   encoding: 'FLAC',
-  //   sampleRate: 44000
+  //   sampleRate: 16000,
+  //   languageCode: 'en-US'
   // };
   //
   // // Detects speech in the audio file. This creates a recognition job that you
   // // can wait for now, or get its result later.
-  // speech.startRecognition('./audio/allison.flac', request)
+  // speech.startRecognition('/Users/topher/Projects/Misc/dictation-api/audio/allison.flac', request)
   //   .then((results) => {
   //     const operation = results[0];
   //     // Get a Promise represention of the final result of the job
@@ -122,6 +132,44 @@ app.post('/audio/new', function(req, res) {
   //     console.log(`Transcription: ${transcription}`);
   //   });
   // // [END speech_async_recognize]
+
+
+
+
+
+  // [START speech_quickstart]
+  // Imports the Google Cloud client library
+  const Speech = require('@google-cloud/speech');
+
+  // Your Google Cloud Platform project ID
+  const projectId = 'dictation-159501';
+
+  // Instantiates a client
+  const speechClient = Speech({
+    projectId: projectId
+  });
+
+  // The name of the audio file to transcribe
+  // const fileName = './public/audio/audio.raw';
+  // const fileName = './public/audio/Audio.mp3';
+  const fileName = './public/audio/temp.raw';
+
+  // The audio file's encoding and sample rate
+  const options = {
+    encoding: 'LINEAR16',
+    // encoding: 'FLAC',
+    sampleRate: 16000
+  };
+
+  // Detects speech in the audio file
+  speechClient.recognize(fileName, options)
+    .then((results) => {
+      const transcription = results[0];
+      console.log(`Transcription: ${transcription}`);
+      res.send(`Transcription: ${transcription}`);
+    });
+  // [END speech_quickstart]
+
 
 
 });
