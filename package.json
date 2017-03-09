@@ -3,14 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@google-cloud/speech": "0.6.0",
+    "@google-cloud/storage": "0.7.0",
     "express": "*",
     "express-fileupload": "^0.1.1",
     "google-speech-api": "*",
     "jade": ">= 0.0.1",
-    "superagent": "*",
-    "@google-cloud/speech": "0.6.0",
-    "@google-cloud/storage": "0.7.0",
     "node-record-lpcm16": "0.2.0",
+    "superagent": "*",
+    "watson-developer-cloud": "^2.25.1",
     "yargs": "6.6.0"
   }
 }
